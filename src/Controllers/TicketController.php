@@ -70,7 +70,7 @@ class TicketController extends Controller
     		'category' => 'required|string|max:30']);
     	$ticket = new Ticket;
     	$ticket->user_id = auth()->id();
-    	$ticket->user_name = auth()->user()->name;
+    	$ticket->user_name = auth()->user()->nama;
     	$ticket->title = $request->title;
     	$ticket->slug = str_slug($request->title) . str_random(4);
     	$ticket->body = $request->body;
@@ -78,7 +78,7 @@ class TicketController extends Controller
     	$ticket->category = $request->category;
     	$ticket->status = "open";
     	$ticket->save();
-    	$notification_data = ['message' => auth()->user()->name . " submitted a ticket",
+    	$notification_data = ['message' => auth()->user()->nama . " submitted a ticket",
 	    	"url" => url("tickets/show/$ticket->slug")];
 		// Notification::send( (new User)->getTicketAdmins(), new TicketNotification($ticket, $notification_data));
 		event(new TicketSubmitted($ticket));
@@ -93,6 +93,7 @@ class TicketController extends Controller
     	if (auth()->user()->isTicketAdmin() OR $ticket->user_id === auth()->id()){
     		$comment = new TicketComment;
     		$comment->user_id = auth()->id();
+			$comment->name = auth()->user()->nama;
     		$comment->ticket_id = $id;
     		$comment->body = $request->content;
 			$comment->save();
